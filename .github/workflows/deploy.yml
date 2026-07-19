@@ -1,0 +1,59 @@
+name: Build and Push to Amazon ECR
+
+on:
+  push:
+    branches: [ main ]
+
+# Least-privilege token permissions for this workflow run
+permissions:
+  id-token: write   # required to request the OIDC token
+  contents: read    # required to checkout the repo
+
+env:
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: secure-ecr-cicd-lab-1
+  IAM_ROLE_ARN: arn:aws:iam::266735846670:role/github-actions-ecr-push-role
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          # No access-key-id / secret-access-key here — OIDC issues short-lived creds
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_SHA_TAG: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          docker build \
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA_TAG" \
+            -t "$ECR_REGISTRY/$ECR_REPOSITORY:latest" \
+            .
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA_TAG"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+      - name: Verify image landed in ECR
+        if: success()
+        run: |
+          aws ecr describe-images \
+            --repository-name "${{ env.ECR_REPOSITORY }}" \
+            --region "${{ env.AWS_REGION }}" \
+            --image-ids imageTag=latest
+
+      - name: Report failure
+        if: failure()
+        run: echo "::error::Build/push failed — no image was published. Check the logs above."

@@ -1,0 +1,13 @@
+{
+  "name": "secure-node-app",
+  "version": "1.0.0",
+  "description": "Sample app for the Secure CI/CD Pipeline lab (GitHub Actions + OIDC + ECR)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

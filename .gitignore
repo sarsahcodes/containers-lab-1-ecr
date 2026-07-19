@@ -1,0 +1,18 @@
+# Environment variables / secrets
+.env
+.env.*
+
+# Local infra files (IAM policies, CloudFormation templates)
+infra/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS/editor cruft
+.DS_Store
+.vscode/
+.idea/
+
+RUNBOOK.md
+README.md

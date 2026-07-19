@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 
 // Used by the Docker HEALTHCHECK instruction
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
+  res.status(200).json({ status: 'healthy!' });
 });
 
 app.listen(PORT, () => {

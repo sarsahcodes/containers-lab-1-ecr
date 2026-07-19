@@ -11,7 +11,7 @@ permissions:
 
 env:
   AWS_REGION: eu-central-1
-  ECR_REPOSITORY: secure-ecr-cicd-lab-1
+  ECR_REPOSITORY: containers-lab-1-ecr
   IAM_ROLE_ARN: arn:aws:iam::266735846670:role/github-actions-ecr-push-role
 
 jobs:

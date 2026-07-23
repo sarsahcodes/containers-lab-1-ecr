@@ -19,6 +19,7 @@ RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 # Non-root user/group (Alpine images run as root by default)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
+# Set runtime working directory
 WORKDIR /app
 
 # Only copy what's needed to run the app — no build tools, no dev deps

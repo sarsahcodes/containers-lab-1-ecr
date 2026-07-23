@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
 
+# GitHub token permissions
 # Least-privilege token permissions for this workflow run
 permissions:
   id-token: write   # required to request the OIDC token
